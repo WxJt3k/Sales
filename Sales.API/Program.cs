@@ -16,7 +16,7 @@ builder.Services.AddTransient<SeedDb>();
 var app = builder.Build();
 SeedData(app);
 
-void SeedData (WebApplication App)
+void SeedData (WebApplication app)
 {
     IServiceScopeFactory? scopedFactory = app.Services.GetService<IServiceScopeFactory?>();
 
