@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using sale.API.Data;
 using Sales.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +11,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("Name = DB"));
+builder.Services.AddTransient<SeedDb>();
 
 var app = builder.Build();
+SeedData(app);
 
+void SeedData (WebApplication App)
+{
+    IServiceScopeFactory? scopedFactory = app.Services.GetService<IServiceScopeFactory?>();
+
+    using (IServiceScope? scope = scopedFactory!.CreateScope())
+    {
+        SeedDb? service = scope.ServiceProvider.GetService<SeedDb?>();
+        service!.SeedAsync().Wait();
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
