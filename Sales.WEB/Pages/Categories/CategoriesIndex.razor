@@ -67,7 +67,7 @@
             return;
         }
 
-        var responseHTTP = await repository.Delete($"/api.categories/{category.Id}");
+        var responseHTTP = await repository.Delete($"/api/categories/{category.Id}");
 
         if (responseHTTP.Error)
         {

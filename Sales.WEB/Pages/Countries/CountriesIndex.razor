@@ -67,7 +67,7 @@
             return;
         }
 
-        var responseHTTP = await repository.Delete($"/api.countries/{country.Id}");
+        var responseHTTP = await repository.Delete($"/api/countries/{country.Id}");
 
         if (responseHTTP.Error)
         {
