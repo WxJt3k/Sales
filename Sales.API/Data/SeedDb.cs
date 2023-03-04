@@ -24,7 +24,7 @@ namespace sale.API.Data
         {
             if(!_context.Countries.Any()) 
             {
-                _context.Countries.Add(new Country { Name = "Colombia" });
+                _context.Countries.Add(new Country { Name = "Islandia" });
                 _context.Countries.Add(new Country { Name = "Alemania" });
             }
            
