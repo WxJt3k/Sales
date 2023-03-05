@@ -12,7 +12,7 @@ namespace Sales.Shared.Entities
         public string Name { get; set; } = null!;
 
         public ICollection<State>? States { get; set; }
-        [Display(Name = "Estados/Departamentos")]
+        [Display(Name = "Estados/Departamentos123")]
         public int StatesNumber => States == null ? 0 : States.Count;
 
     }

@@ -31,7 +31,7 @@ namespace sale.API.Data
                 {
                     Name = "Colombia",
                     States = new List<State>()
-            {
+                {
                 new State()
                 {
                     Name = "Antioquia",
