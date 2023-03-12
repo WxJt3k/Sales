@@ -16,9 +16,9 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync()
         {
-            return Ok (await _context.States.Include(x => x.Cities).ToListAsync());
+            return Ok(await _context.States.Include(x => x.Cities).ToListAsync());
         }
 
         [HttpGet("{id:int}")]

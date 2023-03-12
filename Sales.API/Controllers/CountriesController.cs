@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sales.API.Data;
 using Sales.Shared.Entities;
@@ -11,7 +10,6 @@ namespace Sales.API.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly DataContext _context;
-
         public CountriesController(DataContext context)
         {
             _context = context;
@@ -24,14 +22,14 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet("full")]
-        public async Task<ActionResult>GetFull()
+        public async Task<ActionResult> GetFull()
         {
             return Ok(await _context.Countries.Include(x => x.States!).ThenInclude(x => x.Cities).ToListAsync());
-            
+
         }
 
         [HttpPost]
-        public async Task <ActionResult>Post(Country country)
+        public async Task<ActionResult> Post(Country country)
         {
             _context.Add(country);
             try
@@ -39,13 +37,13 @@ namespace Sales.API.Controllers
                 await _context.SaveChangesAsync();
                 return Ok(country);
             }
-            catch(DbUpdateException dbUpdateException)
+            catch (DbUpdateException dbUpdateException)
             {
-                if(dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
                     return BadRequest("Ya existe un país con el mismo nombre");
                 }
-                else 
+                else
                 {
                     return BadRequest(dbUpdateException.InnerException.Message);
                 }
@@ -54,14 +52,17 @@ namespace Sales.API.Controllers
             {
                 return BadRequest(exception.Message);
             }
-            
+
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var country = await _context.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            if (country is null)
+            var country = await _context.Countries
+                .Include(x => x.States!)
+                .ThenInclude(x => x.Cities)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (country == null)
             {
                 return NotFound();
             }
@@ -77,9 +78,9 @@ namespace Sales.API.Controllers
                 await _context.SaveChangesAsync();
                 return Ok(country);
             }
-            catch(DbUpdateException dbUpdateException) 
+            catch (DbUpdateException dbUpdateException)
             {
-                if(dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
                     return BadRequest("Ya existe un registro con el mismo nombre.");
                 }
@@ -88,7 +89,7 @@ namespace Sales.API.Controllers
                     return BadRequest(dbUpdateException.InnerException.Message);
                 }
             }
-            catch(Exception exception) 
+            catch (Exception exception)
             {
                 return BadRequest(exception.Message);
             }
@@ -100,8 +101,8 @@ namespace Sales.API.Controllers
             var afectedRows = await _context.Countries
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
-            
-            if(afectedRows == 0)
+
+            if (afectedRows == 0)
             {
                 return NotFound();
             }

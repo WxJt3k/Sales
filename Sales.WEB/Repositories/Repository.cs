@@ -42,10 +42,10 @@ namespace Sales.WEB.Repositories
             return new HttpResponseWrapper<TResponse>(default, !responseHttp.IsSuccessStatusCode, responseHttp);
         }
 
-        private async Task<T> UnserializeAnswer<T>(HttpResponseMessage httpresponse, JsonSerializerOptions jsonSerializerOptions)
+        private async Task<T> UnserializeAnswer<T>(HttpResponseMessage httpResponse, JsonSerializerOptions jsonSerializerOptions)
         {
-            var respuestaString = await httpresponse.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(respuestaString, jsonSerializerOptions);
+            var respuestaString = await httpResponse.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(respuestaString, jsonSerializerOptions)!;
         }
 
         public async Task<HttpResponseWrapper<object>> Post<T>(string url, T model)

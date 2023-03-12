@@ -1,11 +1,11 @@
-﻿@page "/country/details/{Id:int}"
+﻿@page "/countries/details/{Id:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
 @if (country is null)
 {
-    <p>Cargando... </p>
+    <p>Cargando...</p>
 }
 else
 {
@@ -15,36 +15,38 @@ else
         <a class="btn btn-success" href="/countries">Regresar</a>
     </div>
 
-    <GenericList MyList="states">
-        <Body>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Estado / Departamento</th>
-                        <th>Ciudades</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var state in states!)
-                    {
+    <GenericList MyList="States">
+        <RecordsComplete>
+            <Body>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>
-                                @state.Name
-                            </td>
-                            <td>
-                                @state.CitiesNumber
-                            </td>
-                            <td>
-                                <a class="btn btn-info" href="/states/details/@state.Id">Detalles</a>
-                                <a class="btn btn-warning" href="/states/edit/@state.Id">Editar</a>
-                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(state.Id))>Borrar</button>
-                            </td>
+                            <th>Estado / Departamento</th>
+                            <th>Ciudades</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </Body>
+                    </thead>
+                    <tbody>
+                        @foreach (var state in States!)
+                        {
+                            <tr>
+                                <td>
+                                    @state.Name
+                                </td>
+                                <td>
+                                    @state.CitiesNumber
+                                </td>
+                                <td>
+                                    <a class="btn btn-info" href="/states/details/@state.Id">Detalles</a>
+                                    <a class="btn btn-warning" href="/states/edit/@state.Id">Editarrrrrr</a>
+                                    <button class="btn btn-danger" @onclick=@(() => DeleteAsync(state.Id))>Borrar</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </Body>
+        </RecordsComplete>
     </GenericList>
 
 }
@@ -52,7 +54,7 @@ else
 
 @code {
     private Country? country;
-    private List <State>? states;
+    private List<State>? States;
 
     [Parameter]
     public int Id { get; set; }
@@ -79,7 +81,7 @@ else
         }
 
         country = responseHttp.Response;
-        states = country!.States!.ToList();
+        States = country!.States!.ToList();
     }
 
     private async Task DeleteAsync(int Id)

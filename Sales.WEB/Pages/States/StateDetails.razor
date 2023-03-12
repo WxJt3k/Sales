@@ -16,30 +16,32 @@ else
     </div>
 
     <GenericList MyList="cities">
-        <Body>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Ciudad</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var city in cities!)
-                    {
+        <RecordsComplete>
+            <Body>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>
-                                @city.Name
-                            </td>
-                            <td>
-                                <a class="btn btn-warning" href="/cities/edit/@city.Id">Editar</a>
-                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
-                            </td>
+                            <th>Ciudad</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </Body>
+                    </thead>
+                    <tbody>
+                        @foreach (var city in cities!)
+                        {
+                            <tr>
+                                <td>
+                                    @city.Name
+                                </td>
+                                <td>
+                                    <a class="btn btn-warning" href="/cities/edit/@city.Id">Editar</a>
+                                    <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </Body>
+        </RecordsComplete>
     </GenericList>
 
 }
