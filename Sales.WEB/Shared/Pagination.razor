@@ -14,7 +14,7 @@
 @code {
     [Parameter] public int CurrentPage { get; set; } = 1;
     [Parameter] public int TotalPages { get; set; }
-    [Parameter] public int Radio { get; set; } = 5;
+    [Parameter] public int Radio { get; set; } = 10;
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
     List<PageModel> Links = new();
 
@@ -45,7 +45,9 @@
         }
 
         var linkNextEnable = CurrentPage != TotalPages;
-        var linkNextPage = CurrentPage + 1;
+        //var linkNextPage = CurrentPage + 1;
+        var linkNextPage = CurrentPage == TotalPages ? CurrentPage : CurrentPage + 1;
+
         Links.Add(new PageModel
             {
                 Text = "Siguiente",

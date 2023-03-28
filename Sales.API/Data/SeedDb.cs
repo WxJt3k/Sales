@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Sales.API.Helpers;
 using Sales.API.Services;
-using Sales.API.Data;
 using Sales.Shared.Entities;
+using Sales.Shared.Enums;
 using Sales.Shared.Responses;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Sales.API.Data
 {
@@ -12,18 +11,54 @@ namespace Sales.API.Data
     {
         private readonly DataContext _context;
         private readonly IApiService _apiService;
-        public SeedDb(DataContext context, IApiService apiService) 
+        private readonly IUserHelper _userHelper;
+        public SeedDb(DataContext context, IApiService apiService, IUserHelper userHelper)
         {
             _context = context;
             _apiService = apiService;
-        } 
+            _userHelper = userHelper;
+        }
 
-        public async Task SeedAsync ()
+        public async Task SeedAsync()
         {
             await _context.Database.EnsureCreatedAsync();
             await CheckCountriesAsync();
+            await CheckRolesAsync();
+            await CheckUserAsync("1010", "Juan", "Zuluaga", "zulu@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", UserType.Admin);
             await CheckCategoriesAsync();
+
         }
+        private async Task<User> CheckUserAsync(string document, string firstName, string lastName, string email, string phone, string address, UserType userType)
+        {
+            var user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phone,
+                    Address = address,
+                    Document = document,
+                    City = _context.Cities.FirstOrDefault(),
+                    UserType = userType,
+                };
+
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+            }
+
+            return user;
+        }
+
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+            await _userHelper.CheckRoleAsync(UserType.User.ToString());
+        }
+
 
         private async Task CheckCountriesAsync()
         {
@@ -51,33 +86,33 @@ namespace Sales.API.Data
                                     {
                                         state = new() { Name = stateResponse.Name!, Cities = new List<City>() };
                                         Response responseCities = await _apiService.GetListAsync<CityResponse>("/v1", $"/countries/{countryResponse.Iso2}/states/{stateResponse.Iso2}/cities");
-                                        if(responseCities.IsSucess)
+                                        if (responseCities.IsSucess)
                                         {
                                             List<CityResponse> cities = (List<CityResponse>)responseCities.Result!;
                                             if (cities is not null || state.Cities.Count > 0)
-                                            {                                            
+                                            {
                                                 foreach (CityResponse cityResponse in cities)
                                                 {
-                                                    if(cityResponse.Name == "Mosfellsbær" || cityResponse.Name == "Șăulița" || cityResponse is null)
+                                                    if (cityResponse.Name == "Mosfellsbær" || cityResponse.Name == "Șăulița" || cityResponse is null)
                                                     {
                                                         continue;
                                                     }
                                                     City city = state.Cities!.FirstOrDefault(c => c.Name == cityResponse.Name!)!;
-                                                    if(city == null)
+                                                    if (city == null)
                                                     {
-                                                        state.Cities.Add(new City() { Name = cityResponse.Name!});
+                                                        state.Cities.Add(new City() { Name = cityResponse.Name! });
                                                     }
                                                 }
                                             }
                                         }
-                                        if(state.CitiesNumber > 0)
+                                        if (state.CitiesNumber > 0)
                                         {
                                             country.States.Add(state);
                                         }
                                     }
                                 }
                             }
-                            if(country.StatesNumber> 0) 
+                            if (country.StatesNumber > 0)
                             {
                                 _context.Countries.Add(country);
                                 await _context.SaveChangesAsync();
